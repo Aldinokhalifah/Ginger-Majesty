@@ -2,7 +2,7 @@
     {{-- Header --}}
     <div class="flex items-center space-x-3 mb-8">
         <i class="fas fa-money-bill-wave text-2xl"></i>
-        <h2 class="text-2xl font-bold tracking-wider">Manajemen Keuangan</h2>
+        <h2 class="text-2xl font-bold tracking-wider">FinYouth</h2>
     </div>
 
     {{-- User Profile --}}
