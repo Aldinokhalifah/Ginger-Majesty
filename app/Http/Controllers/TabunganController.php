@@ -8,22 +8,35 @@ use Illuminate\Support\Facades\Auth;
 
 class TabunganController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user_id = Auth::id();
-        $modal = Tabungan::where('user_id', $user_id)->first();
+        $query = Tabungan::where('user_id', $user_id);
 
-        $tabungan = Tabungan::where('user_id', $user_id)
-            ->select('id', 'nama_goal', 'tanggal', 'target_jumlah', 'jumlah_uang', 'kategori', 'keterangan')
-            ->get()
-            ->map(function ($item) {
-                $progress = ($item->jumlah_uang / $item->target_jumlah) * 100;
-                $item->progress = round($progress);
-                return $item;
-            });
 
-        $ambilKategori = Tabungan::where('user_id', $user_id)
-            ->select('kategori')
+        if($request->kategori && $request->kategori !== "semua kategori") {
+            $query->where('kategori', $request->kategori);
+        }
+
+        switch ($request->sort) {
+        case 'deadline':
+            $query->orderBy('tanggal', 'asc');
+            break;
+        case 'progress':
+            $query->orderByRaw('(jumlah_uang / target_jumlah) DESC');
+            break;
+        default:
+            $query->latest();
+            break;
+    }
+
+        $tabungan = $query->get()->map(function ($item) {
+            $progress = ($item->jumlah_uang / $item->target_jumlah) * 100;
+            $item->progress = round($progress);
+            return $item;
+        });
+
+        $ambilKategori = $query->select('kategori')
             ->distinct()
             ->get();
 
@@ -34,7 +47,9 @@ class TabunganController extends Controller
             'ambilKategori' => $ambilKategori,
             'tabungan' => $tabungan,
             'totalTabungan' => $totalTabungan,
-            'averageProgress' => $averageProgress
+            'averageProgress' => $averageProgress,
+            'selectedKategori' => $request->kategori,
+            'selectedSort' => $request->sort
         ]);
     }
 

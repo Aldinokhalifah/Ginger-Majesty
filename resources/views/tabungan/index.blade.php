@@ -70,22 +70,21 @@
                 </div>
             
                 <!-- Filter dan Sort -->
-                <div class="mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                  <h2 class="text-xl font-semibold text-amber-800">Goals Keuangan Anda</h2>
-                  <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-                    <select class="bg-white border border-amber-200 text-amber-800 rounded-lg px-3 py-2 text-sm w-full">
-                      <option>Semua Kategori</option>
+                <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                  <select id="kategoriFilter" name="kategori" class="bg-white border border-amber-200 text-amber-800 rounded-lg px-3 py-2 text-sm w-full">
+                      <option value="">Semua Kategori</option>
                       @foreach ($ambilKategori as $kategori)
-                      <option value="{{ $kategori->kategori }}">{{ $kategori->kategori }}</option>
-                    @endforeach
-                    </select>
-                    <select class="bg-white border border-amber-200 text-amber-800 rounded-lg px-3 py-2 text-sm text-center w-full">
-                      <option>Urutkan: Terbaru</option>
-                      <option>Urutkan: Deadline Terdekat</option>
-                      <option>Urutkan: Progress Tertinggi</option>
-                    </select>
-                  </div>
-                </div>
+                          <option value="{{ $kategori->kategori }}" {{ request('kategori') == $kategori->kategori ? 'selected' : '' }}>
+                              {{ $kategori->kategori }}
+                          </option>
+                      @endforeach
+                  </select>
+                  <select id="sortFilter" name="sort" class="bg-white border border-amber-200 text-amber-800 rounded-lg px-3 py-2 text-sm text-center w-full">
+                      <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>Urutkan: Terbaru</option>
+                      <option value="deadline" {{ request('sort') == 'deadline' ? 'selected' : '' }}>Urutkan: Deadline Terdekat</option>
+                      <option value="progress" {{ request('sort') == 'progress' ? 'selected' : '' }}>Urutkan: Progress Tertinggi</option>
+                  </select>
+              </div>
             
                 <!-- Goals List -->
                 <div class="space-y-4">
@@ -139,13 +138,6 @@
                       Belum ada goal tabungan. Mulai buat goal pertama Anda!
                     </div>
                   @endforelse
-                </div>
-            
-                <!-- Load More Button -->
-                <div class="mt-8 text-center">
-                  <button class="text-amber-600 hover:text-amber-800 font-medium transition-colors">
-                    Lihat Semua Goals
-                  </button>
                 </div>
               </div>
             
@@ -209,6 +201,37 @@
           function hideModal(id) {
               document.getElementById(id).classList.add('hidden');
           }
+
+          document.addEventListener('DOMContentLoaded', () => {
+              const kategoriFilter = document.getElementById('kategoriFilter');
+              const sortFilter = document.getElementById('sortFilter');
+
+              function updateList() {
+                  const kategori = kategoriFilter.value;
+                  const sort = sortFilter.value;
+                  const currentUrl = new URL(window.location.href);
+                  
+                  // Update URL parameters
+                  if (kategori) {
+                      currentUrl.searchParams.set('kategori', kategori);
+                  } else {
+                      currentUrl.searchParams.delete('kategori');
+                  }
+                  
+                  if (sort) {
+                      currentUrl.searchParams.set('sort', sort);
+                  } else {
+                      currentUrl.searchParams.delete('sort');
+                  }
+
+                  // Redirect to filtered/sorted URL
+                  window.location.href = currentUrl.toString();
+              }
+
+              // Add event listeners
+              kategoriFilter.addEventListener('change', updateList);
+              sortFilter.addEventListener('change', updateList);
+          });
     </script>
 </body>
 </html>
