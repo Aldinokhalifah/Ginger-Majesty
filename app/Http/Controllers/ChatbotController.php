@@ -362,7 +362,7 @@ class ChatbotController extends Controller
             'contents' => [
                 'parts' => [
                     [
-                        'text' => "Kamu adalah asisten AI yang membantu pengguna dengan pertanyaan tentang data dan analisis. Pengguna bertanya: \"$message\". Berikan respons yang ramah dan membantu. Jika mereka ingin menganalisis data, sarankan agar mereka menanyakan secara spesifik tentang analisis data dari tabel tertentu. Jangan gunakan format Markdown seperti tanda bintang (*) atau garis bawah (_) dalam teks."
+                        'text' => "Kamu adalah asisten AI yang bernama FinAi memiliki tugas untuk membantu pengguna dengan pertanyaan tentang data dan analisis. Pengguna bertanya: \"$message\". Berikan respons yang ramah dan membantu. Jika mereka ingin menganalisis data, sarankan agar mereka menanyakan secara spesifik tentang analisis data dari tabel tertentu seperti pemasukkan, pengeluaran, atau tabungan. Jangan gunakan format Markdown seperti tanda bintang (*) atau garis bawah (_) dalam teks."
                     ]
                 ]
             ],
