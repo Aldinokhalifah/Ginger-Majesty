@@ -9,10 +9,59 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="bg-gray-100 flex">
-    
+
+    <!-- Spending Alert -->
+    @if($alertStatus['show'])
+    <div id="spendingAlert" class="fixed inset-0 flex items-center justify-center z-50">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+        
+        <!-- Alert Content -->
+        <div class="container relative bg-white rounded-lg shadow-lg border-l-4 {{ $alertStatus['severity'] === 'danger' ? 'border-red-500' : 'border-amber-500' }} max-w-sm mx-4">
+            <div class="p-4">
+                <div class="flex items-start">
+                    <div class="flex-shrink-0">
+                        @if($alertStatus['severity'] === 'danger')
+                            <svg class="h-6 w-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                            </svg>
+                        @else
+                            <svg class="h-6 w-6 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                            </svg>
+                        @endif
+                    </div>
+                    <div class="ml-3 w-0 flex-1">
+                        <h3 class="text-sm font-medium {{ $alertStatus['severity'] === 'danger' ? 'text-red-800' : 'text-amber-800' }}">
+                            Peringatan Pengeluaran
+                        </h3>
+                        <div class="mt-2 text-sm {{ $alertStatus['severity'] === 'danger' ? 'text-red-700' : 'text-amber-700' }}">
+                            <p>
+                                Pengeluaran Anda telah mencapai {{ $alertStatus['percentage'] }}% dari total pemasukkan.
+                                @if($alertStatus['severity'] === 'danger')
+                                    Segera kurangi pengeluaran!
+                                @else
+                                    Pertimbangkan untuk mengurangi pengeluaran.
+                                @endif
+                            </p>
+                        </div>
+                    </div>
+                    <div class="ml-4 flex-shrink-0 flex">
+                        <button onclick="closeAlert()" class="inline-flex text-gray-400 hover:text-gray-500">
+                            <span class="sr-only">Close</span>
+                            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
 
     <!-- Sidebar -->
-    <div id="sidebar" class="fixed inset-y-0 left-0 transform -translate-x-full lg:translate-x-0 transition duration-200 ease-in-out lg:relative lg:flex">
+    <div id="sidebar" class="fixed inset-y-0 left-0 transform -translate-x-full lg:translate-x-0 z-50 transition duration-200 ease-in-out lg:relative lg:flex">
         <x-sidenav/>
     </div>
 
@@ -71,9 +120,9 @@
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-gray-200">
-                                    @foreach ($latestPemasukkan as $pemasukkan)
+                                    @forelse ($latestPemasukkan as $pemasukkan)
                                         <tr class="hover:bg-gray-50">
-                                            <td class="px-4 py-2 text-sm text-gray-600">{{ $pemasukkan->created_at->format('d M Y') }}</td>
+                                            <td class="px-4 py-2 text-sm text-gray-600">{{ \Carbon\Carbon::parse($pemasukkan->tanggal)->format('d M Y') }}</td>
                                             <td class="px-4 py-2">
                                                 <div>
                                                     <span class="font-medium text-gray-800">{{ $pemasukkan->kategori }}</span>
@@ -82,7 +131,13 @@
                                             </td>
                                             <td class="px-4 py-2 text-right text-green-600 font-medium">+Rp {{ number_format($pemasukkan->jumlah, 0, ',', '.') }}</td>
                                         </tr>
-                                    @endforeach
+                                    @empty
+                                        <tr>
+                                            <td colspan="3" class="text-center py-8 text-gray-500">
+                                                Belum ada pemasukkan terbaru!
+                                            </td>
+                                        </tr>
+                                    @endforelse
                                 </tbody>
                             </table>
                         </div>
@@ -101,9 +156,9 @@
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-gray-200">
-                                    @foreach ($latestPengeluaran as $pengeluaran)
+                                    @forelse ($latestPengeluaran as $pengeluaran)
                                         <tr class="hover:bg-gray-50">
-                                            <td class="px-4 py-2 text-sm text-gray-600">{{ $pengeluaran->created_at->format('d M Y') }}</td>
+                                            <td class="px-4 py-2 text-sm text-gray-600">{{ \Carbon\Carbon::parse($pengeluaran->tanggal)->format('d M Y') }}</td>
                                             <td class="px-4 py-2">
                                                 <div>
                                                     <span class="font-medium text-gray-800">{{ $pengeluaran->kategori }}</span>
@@ -112,7 +167,13 @@
                                             </td>
                                             <td class="px-4 py-2 text-right text-red-600 font-medium">-Rp {{ number_format($pengeluaran->jumlah, 0, ',', '.') }}</td>
                                         </tr>
-                                    @endforeach
+                                    @empty
+                                        <tr>
+                                            <td colspan="3" class="text-center py-8 text-gray-500">
+                                                Belum ada pengeluaran terbaru!
+                                            </td>
+                                        </tr>
+                                    @endforelse
                                 </tbody>
                             </table>
                         </div>
@@ -188,13 +249,45 @@
             });
         });
 
-        // Toggle mobile menu
+         // Toggle mobile menu
         const menuButton = document.getElementById('menuButton');
         const sidebar = document.getElementById('sidebar');
         
+        // Add transition classes for smooth animation
+        sidebar.classList.add('transition-transform', 'duration-300', 'ease-in-out');
+        
         menuButton.addEventListener('click', () => {
             sidebar.classList.toggle('-translate-x-full');
+            // Add overlay for mobile
+            if (!sidebar.classList.contains('-translate-x-full')) {
+            const overlay = document.createElement('div');
+            overlay.className = 'fixed inset-0 bg-black bg-opacity-50 transition-opacity duration-300 z-40';
+            overlay.onclick = () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.remove();
+            };
+            document.body.appendChild(overlay);
+                } else {
+            const overlay = document.querySelector('.bg-opacity-50');
+            if (overlay) overlay.remove();
+                }
         });
+
+         // Alert functions
+        function closeAlert() {
+            const alert = document.getElementById('spendingAlert');
+            if (alert) {
+                alert.classList.add('opacity-0', 'transition-opacity');
+                setTimeout(() => {
+                    alert.remove();
+                }, 300);
+            }
+        }
+
+        // Auto-hide alert after 10 seconds
+        setTimeout(() => {
+            closeAlert();
+        }, 10000);
     </script>
 </body>
 </html>

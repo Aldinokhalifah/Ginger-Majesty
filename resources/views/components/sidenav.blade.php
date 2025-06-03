@@ -19,20 +19,28 @@
 
     {{-- Navigation --}}
     <nav class="space-y-3">
-        <a href="dashboard" class="flex items-center space-x-3 p-3 hover:bg-gradient-to-l from-amber-500 to-yellow-700 rounded-lg transition-all hover:translate-x-1 hover:text-white">
+        <a href="{{ route('dashboard') }}" class="flex items-center space-x-3 p-3 {{ request()->is('dashboard') ? 'bg-gradient-to-l from-amber-500 to-yellow-700 text-white translate-x-1' : '' }} hover:bg-gradient-to-l from-amber-500 to-yellow-700 rounded-lg transition-all hover:translate-x-1 hover:text-white">
             <i class="fas fa-chart-pie"></i>
             <span>Dashboard</span>
         </a>
-        <a href="{{ route('pemasukkan') }}" class="flex items-center space-x-3 p-3 hover:bg-gradient-to-l from-amber-500 to-yellow-700 rounded-lg transition-all hover:translate-x-1 hover:text-white">
+        <a href="{{ route('pemasukkan') }}" class="flex items-center space-x-3 p-3 {{ request()->is('pemasukkan*') ? 'bg-gradient-to-l from-amber-500 to-yellow-700 text-white translate-x-1' : '' }} hover:bg-gradient-to-l from-amber-500 to-yellow-700 rounded-lg transition-all hover:translate-x-1 hover:text-white">
             <i class="fas fa-arrow-down"></i>
             <span>Pemasukkan</span>
         </a>
-        <a href="{{ route('pengeluaran') }}" class="flex items-center space-x-3 p-3 hover:bg-gradient-to-l from-amber-500 to-yellow-700 rounded-lg transition-all hover:translate-x-1 hover:text-white">
+        <a href="{{ route('pengeluaran') }}" class="flex items-center space-x-3 p-3 {{ request()->is('pengeluaran*') ? 'bg-gradient-to-l from-amber-500 to-yellow-700 text-white translate-x-1' : '' }} hover:bg-gradient-to-l from-amber-500 to-yellow-700 rounded-lg transition-all hover:translate-x-1 hover:text-white">
             <i class="fas fa-arrow-up"></i>
             <span>Pengeluaran</span>
         </a>
+        <a href="{{ route('tabungan') }}" class="flex items-center space-x-3 p-3 {{ request()->is('tabungan*') ? 'bg-gradient-to-l from-amber-500 to-yellow-700 text-white translate-x-1' : '' }} hover:bg-gradient-to-l from-amber-500 to-yellow-700 rounded-lg transition-all hover:translate-x-1 hover:text-white">
+            <i class="fas fa-arrow-up"></i>
+            <span>Tabungan</span>
+        </a>
+        <a href="{{ route('chatbot.show') }}" class="flex items-center space-x-3 p-3 {{ request()->is('chatbot*') ? 'bg-gradient-to-l from-amber-500 to-yellow-700 text-white translate-x-1' : '' }} hover:bg-gradient-to-l from-amber-500 to-yellow-700 rounded-lg transition-all hover:translate-x-1 hover:text-white">
+            <i class="fas fa-arrow-up"></i>
+            <span>FinAi</span>
+        </a>
         <div class="pt-4 mt-4 border-t border-blue-700">
-            <a href="{{ route('profile.edit') }}" class="flex items-center space-x-3 p-3 hover:bg-gradient-to-l from-amber-500 to-yellow-700 rounded-lg transition-all hover:translate-x-1 hover:text-white">
+            <a href="{{ route('profile.edit') }}" class="flex items-center space-x-3 p-3 {{ request()->is('profile*') ? 'bg-gradient-to-l from-amber-500 to-yellow-700 text-white translate-x-1' : '' }} hover:bg-gradient-to-l from-amber-500 to-yellow-700 rounded-lg transition-all hover:translate-x-1 hover:text-white">
                 <i class="fas fa-arrow-up"></i>
                 <span>Profil</span>
             </a>

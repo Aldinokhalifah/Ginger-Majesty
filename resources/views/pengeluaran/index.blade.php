@@ -18,7 +18,7 @@
     <div class="flex-1 p-6 relative z-0">
         <div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-lg">
             <div class="flex justify-between items-center w-full">
-                <h2 class="text-2xl font-bold text-gray-800 text-pretty">Dashboard Pengeluaran</h2>
+                <h2 class="text-2xl font-bold text-gray-800">Dashboard Pengeluaran</h2>
                 <h2 class="font-semibold text-slate-700 text-lg hidden lg:block">
                     @auth
                         {{ Auth::user()->name }}
@@ -41,7 +41,7 @@
             <div class="mt-6">
                 <h3 class="text-lg font-semibold text-gray-700">Riwayat Pengeluaran Terbaru</h3>
                 <ul class="mt-3 space-y-2">
-                    @foreach ($latestPengeluaran as $pengeluaran)
+                    @forelse ($latestPengeluaran as $pengeluaran)
                         <li class="p-3 bg-gray-50 rounded-lg relative">
                             <form action="{{ route('pengeluaran.delete', $pengeluaran->id) }}" method="POST" class="text-gray-400 absolute top-2 right-2">
                                 @csrf
@@ -55,7 +55,7 @@
                             <div class="flex flex-col sm:flex-row justify-between gap-2 pr-8">
                                 <div class="flex flex-col space-y-1">
                                     <span class="font-medium text-gray-800">{{ $pengeluaran->kategori }}</span>
-                                    <span class="text-sm text-slate-600">{{ $pengeluaran->created_at->format('d M Y') }}</span>
+                                    <span class="text-sm text-slate-600">{{ \Carbon\Carbon::parse($pengeluaran->tanggal)->format('d M Y') }}</span>
                                     <div class="flex gap-1 items-start">
                                         <span class="font-semibold min-w-[35px]">Ket:</span>
                                         <span class="text-sm text-slate-700 break-words">{{ $pengeluaran->keterangan }}</span>
@@ -66,7 +66,12 @@
                                 </span>
                             </div>
                         </li>
-                    @endforeach
+                        
+                    @empty
+                        <div class="text-center py-8 text-gray-500">
+                            Belum ada pengeluaran. Mulai buat pengeluaran pertama Anda!
+                        </div>
+                    @endforelse
                 </ul>
             </div>
 
@@ -152,8 +157,24 @@
         const menuButton = document.getElementById('menuButton');
         const sidebar = document.getElementById('sidebar');
         
-        menuButton.addEventListener('click', () => {
-            sidebar.classList.toggle('-translate-x-full');
+        // Add transition classes for smooth animation
+        sidebar.classList.add('transition-transform', 'duration-300', 'ease-in-out');
+            
+            menuButton.addEventListener('click', () => {
+                sidebar.classList.toggle('-translate-x-full');
+                // Add overlay for mobile
+                if (!sidebar.classList.contains('-translate-x-full')) {
+            const overlay = document.createElement('div');
+            overlay.className = 'fixed inset-0 bg-black bg-opacity-50 transition-opacity duration-300 z-40';
+            overlay.onclick = () => {
+                sidebar.classList.add('-translate-x-full');
+                overlay.remove();
+            };
+            document.body.appendChild(overlay);
+                } else {
+            const overlay = document.querySelector('.bg-opacity-50');
+            if (overlay) overlay.remove();
+                }
         });
     </script>
 </body>

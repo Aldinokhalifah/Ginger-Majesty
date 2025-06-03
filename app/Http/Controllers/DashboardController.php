@@ -27,13 +27,24 @@ class DashboardController extends Controller
             'Total Pengeluaran' => $totalPengeluaran,
         ]);
 
+        $spendingPercentage = $totalPemasukkan > 0 
+        ? ($totalPengeluaran / $totalPemasukkan) * 100 
+        : 0;
+
+        $alertStatus = [
+            'show' => $spendingPercentage >= 75,
+            'percentage' => round($spendingPercentage, 1),
+            'severity' => $spendingPercentage >= 90 ? 'danger' : 'warning'
+        ];
+
         return view('dashboard', [
             'totalPemasukkan' => $totalPemasukkan,
             'totalPengeluaran' => $totalPengeluaran,
             'saldo' => $saldo,
             'chartData' => $chartData,
             'latestPemasukkan' => $latestPemasukkan,
-            'latestPengeluaran' => $latestPengeluaran
+            'latestPengeluaran' => $latestPengeluaran,
+            'alertStatus' => $alertStatus
         ]);
     }
 }
