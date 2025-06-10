@@ -157,7 +157,7 @@
                                 </thead>
                                 <tbody class="divide-y divide-gray-200">
                                     @forelse ($latestPengeluaran as $pengeluaran)
-                                        <tr class="hover:bg-gray-50">
+                                        <tr class="hover:bg-gray-50 overflow-x-auto">
                                             <td class="px-4 py-2 text-sm text-gray-600">{{ \Carbon\Carbon::parse($pengeluaran->tanggal)->format('d M Y') }}</td>
                                             <td class="px-4 py-2">
                                                 <div>
@@ -187,57 +187,74 @@
     <!-- Script untuk Chart.js -->
     <script>
         
-        document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('DOMContentLoaded', function() {
             const ctx = document.getElementById('dashboardChart').getContext('2d');
-            new Chart(ctx, {
+            const dashboardChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: ['Total Pemasukkan', 'Total Pengeluaran'],
-                    datasets: [
-                        {
-                            data: [
-                                {{ $chartData['Total Pemasukkan'] ?? 0 }},
-                                {{ $chartData['Total Pengeluaran'] ?? 0 }}
-                            ],
-                            backgroundColor: [
-                                'rgba(34, 197, 94, 0.5)',  // Hijau untuk Pemasukkan
-                                'rgba(239, 68, 68, 0.5)'   // Merah untuk Pengeluaran
-                            ],
-                            borderColor: [
-                                'rgb(34, 197, 94)',
-                                'rgb(239, 68, 68)'
-                            ],
-                            borderWidth: 1,
-                            borderRadius: 10,
-                            hoverBackgroundColor: [
-                                'rgba(34, 197, 94, 0.7)',
-                                'rgba(239, 68, 68, 0.7)'
-                            ]
-                        }
-                    ]
+                    datasets: [{
+                        data: [
+                            {{ $chartData['Total Pemasukkan'] ?? 0 }},
+                            {{ $chartData['Total Pengeluaran'] ?? 0 }}
+                        ],
+                        backgroundColor: [
+                            'rgba(34, 197, 94, 0.5)',
+                            'rgba(239, 68, 68, 0.5)'
+                        ],
+                        borderColor: [
+                            'rgb(34, 197, 94)',
+                            'rgb(239, 68, 68)'
+                        ],
+                        borderWidth: 1,
+                        borderRadius: 10,
+                        hoverBackgroundColor: [
+                            'rgba(34, 197, 94, 0.7)',
+                            'rgba(239, 68, 68, 0.7)'
+                        ]
+                    }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
+                        x: {
+                            ticks: {
+                                // Rotasi hanya untuk mobile
+                                maxRotation: window.innerWidth < 768 ? 45 : 0,
+                                minRotation: window.innerWidth < 768 ? 45 : 0,
+                                font: {
+                                    size: window.innerWidth < 768 ? 10 : 12
+                                },
+                                callback: function(value, index, values) {
+                                    const label = this.getLabelForValue(value);
+                                    // Mempersingkat label untuk layar mobile
+                                    if (window.innerWidth < 768) {
+                                        const labels = ['Pemasukkan', 'Pengeluaran'];
+                                        return labels[index];
+                                    }
+                                    return label;
+                                }
+                            }
+                        },
                         y: {
                             beginAtZero: true,
                             ticks: {
                                 callback: function(value) {
                                     return 'Rp ' + new Intl.NumberFormat('id-ID').format(value);
+                                },
+                                font: {
+                                    size: window.innerWidth < 768 ? 10 : 12
                                 }
                             }
                         }
                     },
                     plugins: {
                         legend: {
-                            display: false // Hide legend since we don't need it
+                            display: false
                         },
                         tooltip: {
                             callbacks: {
-                                title: function(tooltipItems) {
-                                    return tooltipItems[0].label;
-                                },
                                 label: function(context) {
                                     const value = context.raw;
                                     return 'Rp ' + new Intl.NumberFormat('id-ID').format(value);
@@ -288,6 +305,12 @@
         setTimeout(() => {
             closeAlert();
         }, 10000);
+
+        window.addEventListener('resize', function() {
+            dashboardChart.options.scales.x.ticks.maxRotation = window.innerWidth < 768 ? 45 : 0;
+            dashboardChart.options.scales.x.ticks.minRotation = window.innerWidth < 768 ? 45 : 0;
+            dashboardChart.update();
+        });
     </script>
 </body>
 </html>

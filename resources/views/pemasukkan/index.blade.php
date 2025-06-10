@@ -124,12 +124,12 @@
     <script>
         var ctx = document.getElementById('pemasukkanChart').getContext('2d');
         var pemasukkanChart = new Chart(ctx, {
-            type: 'bar', 
+            type: 'bar',
             data: {
-                labels: {!! json_encode($chartData->keys()) !!}, 
+                labels: {!! json_encode($chartData->keys()) !!},
                 datasets: [{
                     label: 'Total Pemasukkan',
-                    data: {!! json_encode($chartData->values()) !!}, 
+                    data: {!! json_encode($chartData->values()) !!},
                     backgroundColor: 'rgba(34, 197, 94, 0.5)',
                     borderColor: 'rgba(34, 197, 94, 1)',
                     borderWidth: 1,
@@ -140,8 +140,55 @@
                 responsive: true,
                 maintainAspectRatio: true,
                 scales: {
-                    y: { beginAtZero: true },
+                    x: {
+                        ticks: {
+                            // Rotasi hanya untuk mobile
+                            maxRotation: window.innerWidth < 768 ? 45 : 0,
+                            minRotation: window.innerWidth < 768 ? 45 : 0,
+                            font: {
+                                size: window.innerWidth < 768 ? 10 : 12
+                            },
+                            callback: function(value, index) {
+                                const label = this.getLabelForValue(value);
+                                // Mempersingkat label hanya untuk mobile
+                                if (window.innerWidth < 768) {
+                                    return label.length > 10 ? label.substring(0, 10) + '...' : label;
+                                }
+                                return label;
+                            }
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return 'Rp ' + new Intl.NumberFormat('id-ID').format(value);
+                            },
+                            font: {
+                                size: window.innerWidth < 768 ? 10 : 12
+                            }
+                        }
+                    }
                 },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            font: {
+                                size: window.innerWidth < 768 ? 10 : 12
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const value = context.raw;
+                                return 'Rp ' + new Intl.NumberFormat('id-ID').format(value);
+                            }
+                        }
+                    }
+                }
             }
         });
 
@@ -175,6 +222,12 @@
             const overlay = document.querySelector('.bg-opacity-50');
             if (overlay) overlay.remove();
                 }
+        });
+
+        window.addEventListener('resize', function() {
+            pemasukkanChart.options.scales.x.ticks.maxRotation = window.innerWidth < 768 ? 45 : 0;
+            pemasukkanChart.options.scales.x.ticks.minRotation = window.innerWidth < 768 ? 45 : 0;
+            pemasukkanChart.update();
         });
     </script>
 </body>

@@ -87,7 +87,7 @@
                         <p>Halo! Saya adalah FinAi. Saya dapat membantu menganalisis data Anda.</p>
                         <p class="text-sm text-gray-600 mt-2">Contoh permintaan:</p>
                         <ul class="text-sm text-gray-600 list-disc pl-5">
-                            <li>Analisa pemasukkan dan pengeluaran saya dari bulan Januari sampai Maret</li>
+                            <li>Analisa pemasukkan dan pengeluaran saya di bulan ini</li>
                             <li>Apakah ada saran untuk saya agar dapat mengurangi pengeluaran?</li>
                         </ul>
                     </div>
