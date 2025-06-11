@@ -17,7 +17,7 @@
             display: flex;
             flex-direction: column;
             height: calc(100vh - 8rem);
-            max-height: calc(100vh - 8rem);
+            max-height: calc(100vh - 4rem);
         }
         .chat-messages {
             flex: 1;
@@ -204,7 +204,8 @@
                         if (response.status === 405) {
                             throw new Error('Method not allowed. Please check route configuration.');
                         }
-                        throw new Error(`HTTP error! status: ${response.status}`);
+                        throw new Error(`Terjadi Kesalahan Pada Jaringan`);
+                        console.log(`HTTP error! status: ${response.status}`);
                     }
                     return response.json();
                 })
